@@ -19,7 +19,10 @@ bool is_primitive(const std::string& token) {
 	return token == "+"
 	    || token == "-"
 	    || token == "*"
-	    || token == ".";
+	    || token == "."
+	    || token == "swp"
+	    || token == "dup"
+	    || token == "del";
 }
 
 void process(std::stack<int>& stack, const std::string& token) {
@@ -46,6 +49,18 @@ void process(std::stack<int>& stack, const std::string& token) {
 		stack.push(a * b);
 	} else if ( token == "." ) {
 		std::cout << stack.top() << std::endl;
+	} else if ( token == "swp" ) {
+		const int b = stack.top();
+		stack.pop();
+		const int a = stack.top();
+		stack.pop();
+
+		stack.push(b);
+		stack.push(a);
+	} else if ( token == "dup" ) {
+		stack.push(stack.top());
+	} else if ( token == "del" ) {
+		stack.pop();
 	}
 }
 
