@@ -10,32 +10,31 @@ SList!int               stack;
 DList!string[string]    words;
 Nullable!(DList!string) definition;
 
-void push(ref SList!int stack, int value) {
-	if ( definition.isNull ) {
-		stack.insertFront(value);
-	} else {
-		definition.insertBack(to!string(value));
-	}
+void startDefinition()
+in  { assert( definition.isNull); }
+out { assert(!definition.isNull); }
+body {
+	definition = DList!string();
 }
 
-int pop(ref SList!int stack) {
-	auto x = stack.front;
-	stack.removeFront;
+void endDefinition()
+in  { assert(!definition.isNull); }
+out { assert( definition.isNull); }
+body {
+	auto wordToBeDefined = definition.front;
 
-	return x;
+	if ( wordToBeDefined.isNumeric ) {
+		throw new Exception("words may not be numeric");
+	} else {
+		definition.removeFront;
+		words[wordToBeDefined] = definition;
+		definition.nullify;
+	}
 }
 
 void append(ref Nullable!(DList!string) definition, string token) {
 	if ( token == ";" ) {
-		auto wordToBeDefined = definition.front;
-
-		if ( wordToBeDefined.isNumeric ) {
-			throw new Exception("words may not be numeric");
-		} else {
-			definition.removeFront;
-			words[wordToBeDefined] = definition;
-			definition.nullify;
-		}
+		endDefinition();
 	} else {
 		definition.insertBack(token);
 	}
@@ -44,7 +43,7 @@ void append(ref Nullable!(DList!string) definition, string token) {
 void evaluate(string word) {
 	switch ( word ) {
 		case "§":
-			definition = DList!string();
+			startDefinition();
 			break;
 		case "+":
 			auto a = stack.pop();
@@ -63,24 +62,39 @@ void evaluate(string word) {
 			break;
 		default:
 			foreach ( token; words[word] ) {
-				if ( token.isNumeric ) {
-					stack.push(parse!int(token));
-				} else {
-					evaluate(token);
-				}
+				process(token);
 			}
 	}
+}
+
+void process(string token) {
+	if ( token.isNumeric ) {
+		stack.push(parse!int(token));
+	} else {
+		evaluate(token);
+	}
+}
+
+void push(ref SList!int stack, int value) {
+	if ( definition.isNull ) {
+		stack.insertFront(value);
+	} else {
+		definition.append(to!string(value));
+	}
+}
+
+int pop(ref SList!int stack) {
+	auto x = stack.front;
+	stack.removeFront;
+
+	return x;
 }
 
 void main() {
 	while ( !stdin.eof ) {
 		foreach ( token; stdin.readln.split ) {
 			if ( definition.isNull ) {
-				if ( token.isNumeric ) {
-					stack.push(parse!int(token));
-				} else {
-					evaluate(token);
-				}
+				process(token);
 			} else {
 				definition.append(token);
 			}
