@@ -1,86 +1,20 @@
 import std.stdio;
 import std.string;
 import std.conv;
+import std.typecons;
+
 import std.container : SList;
 import std.container : DList;
-import std.variant;
 
-alias Token = Algebraic!(int, string);
-
-auto dataStack = SList!int();
-
-bool   defMode     = false;
-string defModeWord = "";
-
-DList!Token[string] wordMap;
-
-void push(ref DList!Token stack, int value) {
-	stack.insertBack(Token(value));
-}
-
-void push(ref DList!Token stack, string word) {
-	stack.insertBack(Token(word));
-}
-
-void push(ref DList!Token[string] map, int value) {
-	map[defModeWord].push(value);
-}
-
-void push(ref DList!Token[string] map, string word) {
-	if ( defModeWord == "" ) {
-		defModeWord      = word;
-		map[defModeWord] = DList!Token();
-	} else {
-		map[defModeWord].push(word);
-	}
-}
+SList!int               stack;
+DList!string[string]    words;
+Nullable!(DList!string) definition;
 
 void push(ref SList!int stack, int value) {
-	if ( defMode ) {
-		wordMap.push(value);
-	} else {
+	if ( definition.isNull ) {
 		stack.insertFront(value);
-	}
-}
-
-void push(ref SList!int stack, string word) {
-	if ( defMode ) {
-		if ( word == ";" ) {
-			defMode     = false;
-			defModeWord = "";
-		} else {
-			wordMap.push(word);
-		}
 	} else {
-		switch ( word ) {
-			case "§":
-				defMode     = true;
-				defModeWord = "";
-				break;
-			case "+":
-				auto a = stack.pop();
-				auto b = stack.pop();
-
-				stack.push(a + b);
-				break;
-			case "*":
-				auto a = stack.pop();
-				auto b = stack.pop();
-
-				stack.push(a * b);
-				break;
-			case ".":
-				writeln(stack.front);
-				break;
-			default:
-				foreach ( token; wordMap[word] ) {
-					if ( token.type == typeid(int) ) {
-						stack.push(*token.peek!int);
-					} else {
-						stack.push(*token.peek!string);
-					}
-				}
-		}
+		definition.insertBack(to!string(value));
 	}
 }
 
@@ -91,13 +25,64 @@ int pop(ref SList!int stack) {
 	return x;
 }
 
+void append(ref Nullable!(DList!string) definition, string token) {
+	if ( token == ";" ) {
+		auto wordToBeDefined = definition.front;
+
+		if ( wordToBeDefined.isNumeric ) {
+			throw new Exception("words may not be numeric");
+		} else {
+			definition.removeFront;
+			words[wordToBeDefined] = definition;
+			definition.nullify;
+		}
+	} else {
+		definition.insertBack(token);
+	}
+}
+
+void evaluate(string word) {
+	switch ( word ) {
+		case "§":
+			definition = DList!string();
+			break;
+		case "+":
+			auto a = stack.pop();
+			auto b = stack.pop();
+
+			stack.push(a + b);
+			break;
+		case "*":
+			auto a = stack.pop();
+			auto b = stack.pop();
+
+			stack.push(a * b);
+			break;
+		case ".":
+			writeln(stack.front);
+			break;
+		default:
+			foreach ( token; words[word] ) {
+				if ( token.isNumeric ) {
+					stack.push(parse!int(token));
+				} else {
+					evaluate(token);
+				}
+			}
+	}
+}
+
 void main() {
 	while ( !stdin.eof ) {
-		foreach ( word; stdin.readln.split ) {
-			if ( word.isNumeric ) {
-				dataStack.push(parse!int(word));
+		foreach ( token; stdin.readln.split ) {
+			if ( definition.isNull ) {
+				if ( token.isNumeric ) {
+					stack.push(parse!int(token));
+				} else {
+					evaluate(token);
+				}
 			} else {
-				dataStack.push(word);
+				definition.append(token);
 			}
 		}
 	}
