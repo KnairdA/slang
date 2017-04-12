@@ -1,123 +1,34 @@
 import std.stdio;
 import std.string;
 import std.conv;
+import std.variant;
 import std.typecons;
 
 import std.container : SList;
-import std.container : DList;
 
-import std.variant;
+import src.stack;
 
-alias Token = Algebraic!(int, string);
+static import src.definition;
+static import src.primitives;
 
-SList!Token            stack;
-DList!Token[string]    words;
-int[string]            variables;
-Nullable!(DList!Token) definition;
-
-void startDefinition()
-in  { assert( definition.isNull); }
-out { assert(!definition.isNull); }
-body {
-	definition = DList!Token();
+void process(int x) {
+	stack.push(x);
 }
 
-void endDefinition()
-in  { assert(!definition.isNull); }
-out { assert( definition.isNull); }
-body {
-	string wordToBeDefined;
-
-	definition.front.visit!(
-		(int    x   ) => wordToBeDefined = "",
-		(string name) => wordToBeDefined = name
-	);
-
-	if ( wordToBeDefined == "" ) {
-		throw new Exception("words may not be numeric");
-	}
-
-	definition.removeFront;
-	words[wordToBeDefined] = definition;
-	definition.nullify;
-}
-
-void append(ref Nullable!(DList!Token) definition, int value) {
-	definition.insertBack(Token(value));
-}
-
-void append(ref Nullable!(DList!Token) definition, string word) {
-	if ( word == ";" ) {
-		endDefinition();
-	} else {
-		definition.insertBack(Token(word));
-	}
-}
-
-void evaluate(string word) {
-	switch ( word ) {
-		case "§":
-			startDefinition();
-			break;
-		case "$":
-			string name  = stack.pop().get!string;
-			int    value = stack.pop().get!int;
-
-			variables[name] = value;
-			break;
-		case "@":
-			string name = stack.pop().get!string;
-
-			if ( name in variables ) {
-				stack.push(variables[name]);
-			}
-			break;
-		case "+":
-			int b = stack.pop().get!int;
-			int a = stack.pop().get!int;
-
-			stack.push(a + b);
-			break;
-		case "*":
-			int b = stack.pop().get!int;
-			int a = stack.pop().get!int;
-
-			stack.push(a * b);
-			break;
-		case "/":
-			int b = stack.pop().get!int;
-			int a = stack.pop().get!int;
-
-			if ( b == 0 ) {
-				throw new Exception("division by 0 undefined");
-			} else {
-				stack.push(a / b);
-			}
-			break;
-		case "%":
-			int b = stack.pop().get!int;
-			int a = stack.pop().get!int;
-
-			if ( b == 0 ) {
-				throw new Exception("modulo 0 undefined");
-			} else {
-				stack.push(a % b);
-			}
-			break;
-		case ".":
-			stack.pop;
-			break;
-		case "'":
-			writeln(stack.top);
-			break;
-		default:
-			if ( word in words ) {
-				foreach ( token; words[word] ) {
+void process(string word) {
+	try {
+		if ( !src.primitives.evaluate(word) ) {
+			if ( word in src.definition.words ) {
+				foreach ( token; src.definition.words[word] ) {
 					process(token);
 				}
 			} else {
 				stack.push(word);
 			}
+		}
+	}
+	catch (Exception ex) {
+		writeln("Error: ", ex.msg);
 	}
 }
 
@@ -128,63 +39,18 @@ void process(Token token) {
 	);
 }
 
-void process(int x) {
-	stack.push(x);
-}
-
-void process(string word) {
-	try {
-		evaluate(word);
-	}
-	catch (Exception ex) {
-		writeln("Error: ", ex.msg);
-	}
-}
-
-void push(ref SList!Token stack, int value) {
-	if ( definition.isNull ) {
-		stack.insertFront(Token(value));
-	} else {
-		definition.append(value);
-	}
-}
-
-void push(ref SList!Token stack, string word) {
-	if ( definition.isNull ) {
-		stack.insertFront(Token(word));
-	} else {
-		definition.append(word);
-	}
-}
-
-Token top(ref SList!Token stack) {
-	if ( stack.empty ) {
-		throw new Exception("stack is empty");
-	} else {
-		return stack.front;
-	}
-}
-
-Token pop(ref SList!Token stack) {
-	Token token = stack.top;
-	stack.removeFront;
-	return token;
-}
-
 void main() {
 	while ( !stdin.eof ) {
 		foreach ( token; stdin.readln.split ) {
-			if ( definition.isNull ) {
-				if ( token.isNumeric ) {
-					process(parse!int(token));
-				} else {
-					process(token);
+			if ( token.isNumeric ) {
+				immutable int value = parse!int(token);
+
+				if ( !src.definition.handle(value) ) {
+					process(value);
 				}
 			} else {
-				if ( token.isNumeric ) {
-					definition.append(parse!int(token));
-				} else {
-					definition.append(token);
+				if ( !src.definition.handle(token) ) {
+					process(token);
 				}
 			}
 		}
