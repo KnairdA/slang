@@ -8,12 +8,12 @@ import std.container : SList;
 
 import src.stack;
 
-static import src.definition;
-static import src.primitives;
+static import definition = src.definition;
+static import primitives = src.primitives.eval;
 
 void process(int x) {
 	try {
-		if ( !src.primitives.evaluate(x) ) {
+		if ( !primitives.evaluate(x) ) {
 			stack.push(x);
 		}
 	}
@@ -24,9 +24,9 @@ void process(int x) {
 
 void process(string word) {
 	try {
-		if ( !src.primitives.evaluate(word) ) {
-			if ( word in src.definition.words ) {
-				foreach ( token; src.definition.words[word] ) {
+		if ( !primitives.evaluate(word) ) {
+			if ( word in definition.words ) {
+				foreach ( token; definition.words[word] ) {
 					process(token);
 				}
 			} else {
@@ -52,11 +52,11 @@ void main() {
 			if ( token.isNumeric ) {
 				immutable int value = parse!int(token);
 
-				if ( !src.definition.handle(value) ) {
+				if ( !definition.handle(value) ) {
 					process(value);
 				}
 			} else {
-				if ( !src.definition.handle(token) ) {
+				if ( !definition.handle(token) ) {
 					process(token);
 				}
 			}

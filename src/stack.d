@@ -25,14 +25,19 @@ Token pop(ref Stack!Token stack) {
 	return token;
 }
 
-void push(ref Stack!Token stack, int value) {
-	if ( !src.definition.handle(value) ) {
-		stack.insertFront(Token(value));
+void push(ref Stack!Token stack, Token token) {
+	if ( !token.visit!(
+		(int    x   ) => src.definition.handle(x),
+		(string word) => src.definition.handle(word)
+	) ) {
+		stack.insertFront(token);
 	}
 }
 
+void push(ref Stack!Token stack, int value) {
+	stack.push(Token(value));
+}
+
 void push(ref Stack!Token stack, string word) {
-	if ( !src.definition.handle(word) ) {
-		stack.insertFront(Token(word));
-	}
+	stack.push(Token(word));
 }
