@@ -8,10 +8,13 @@ bool evaluate(int value) {
 
 bool evaluate(string word) {
 	if ( drop_mode ) {
-		if ( word == "then" ) {
-			return conditional_end;
-		} else {
-			return true;
+		switch ( word ) {
+			case "then":
+				return conditional_then;
+			case "else":
+				return conditional_else;
+			default:
+				return true;
 		}
 	}
 
@@ -23,9 +26,11 @@ bool evaluate(string word) {
 		case "@":
 			return unary_op_variable_resolve;
 		case "if":
-			return conditional_start;
+			return conditional_if;
 		case "then":
-			return conditional_end;
+			return conditional_then;
+		case "else":
+			return conditional_else;
 		case "+":
 			return binary_op_add;
 		case "*":

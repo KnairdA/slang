@@ -31,7 +31,7 @@ bool unary_op_variable_resolve() {
 	return true;
 }
 
-bool conditional_start() {
+bool conditional_if() {
 	switch ( stack.pop.get!int ) {
 		case 0:
 			drop_mode = true;
@@ -44,7 +44,12 @@ bool conditional_start() {
 	}
 }
 
-bool conditional_end() {
+bool conditional_then() {
+	drop_mode = !drop_mode;
+	return true;
+}
+
+bool conditional_else() {
 	drop_mode = false;
 	return true;
 }
