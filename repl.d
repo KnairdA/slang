@@ -73,19 +73,34 @@ void evaluate(string word) {
 			}
 			break;
 		case "+":
-			int a = stack.pop().get!int;
 			int b = stack.pop().get!int;
+			int a = stack.pop().get!int;
 
 			stack.push(a + b);
 			break;
 		case "*":
-			int a = stack.pop().get!int;
 			int b = stack.pop().get!int;
+			int a = stack.pop().get!int;
 
 			stack.push(a * b);
 			break;
+		case "/":
+			int b = stack.pop().get!int;
+			int a = stack.pop().get!int;
+
+			stack.push(a / b);
+			break;
+		case "%":
+			int b = stack.pop().get!int;
+			int a = stack.pop().get!int;
+
+			stack.push(a % b);
+			break;
 		case ".":
-			writeln(stack.front);
+			stack.pop;
+			break;
+		case "'":
+			writeln(stack.top);
 			break;
 		default:
 			if ( word in words ) {
@@ -110,7 +125,12 @@ void process(int x) {
 }
 
 void process(string word) {
-	evaluate(word);
+	try {
+		evaluate(word);
+	}
+	catch (Exception ex) {
+		writeln("Error: ", ex.msg);
+	}
 }
 
 void push(ref SList!Token stack, int value) {
@@ -129,8 +149,16 @@ void push(ref SList!Token stack, string word) {
 	}
 }
 
+Token top(ref SList!Token stack) {
+	if ( stack.empty ) {
+		throw new Exception("stack is empty");
+	} else {
+		return stack.front;
+	}
+}
+
 Token pop(ref SList!Token stack) {
-	Token token = stack.front;
+	Token token = stack.top;
 	stack.removeFront;
 	return token;
 }
