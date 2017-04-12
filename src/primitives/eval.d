@@ -42,6 +42,10 @@ bool evaluate(string word) {
 			return unary_op_stack_dup;
 		case "swp":
 			return binary_op_stack_swp;
+		case "<":
+			return binary_cond_lt;
+		case "=":
+			return binary_cond_eq;
 		default:
 			return false;
 	}

@@ -117,3 +117,19 @@ bool binary_op_stack_swp() {
 
 	return true;
 }
+
+bool binary_cond_lt() {
+	int b = stack.pop.get!int;
+	int a = stack.pop.get!int;
+
+	stack.push(a < b);
+	return true;
+}
+
+bool binary_cond_eq() {
+	int b = stack.pop.get!int;
+	int a = stack.pop.get!int;
+
+	stack.push(a == b);
+	return true;
+}
