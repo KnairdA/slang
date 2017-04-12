@@ -6,8 +6,21 @@ import src.stack;
 import src.definition;
 
 int[string] variables;
+bool        drop_mode;
+
+bool evaluate(int value) {
+	return drop_mode;
+}
 
 bool evaluate(string word) {
+	if ( drop_mode ) {
+		if ( word == "then" ) {
+			drop_mode = false;
+		}
+
+		return true;
+	}
+
 	switch ( word ) {
 		case "§":
 			src.definition.start;
@@ -24,6 +37,20 @@ bool evaluate(string word) {
 			if ( name in variables ) {
 				stack.push(variables[name]);
 			}
+			return true;
+		case "if":
+			switch ( stack.pop.get!int ) {
+				case 0:
+					drop_mode = true;
+					return true;
+				case 1:
+					drop_mode = false;
+					return true;
+				default:
+					throw new Exception("invalid logic value");
+			}
+		case "then":
+			drop_mode = false;
 			return true;
 		case "+":
 			int b = stack.pop.get!int;

@@ -12,7 +12,14 @@ static import src.definition;
 static import src.primitives;
 
 void process(int x) {
-	stack.push(x);
+	try {
+		if ( !src.primitives.evaluate(x) ) {
+			stack.push(x);
+		}
+	}
+	catch (Exception ex) {
+		writeln("Error: ", ex.msg);
+	}
 }
 
 void process(string word) {
