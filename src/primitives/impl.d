@@ -5,8 +5,8 @@ import std.stdio;
 import src.stack;
 import src.definition;
 
-int[string] variables;
-bool        drop_mode;
+Token[string] variables;
+bool          drop_mode;
 
 bool definition_start() {
 	src.definition.start;
@@ -15,7 +15,7 @@ bool definition_start() {
 
 bool binary_op_variable_bind() {
 	string name  = stack.pop.get!string;
-	int    value = stack.pop.get!int;
+	Token  value = stack.pop;
 
 	variables[name] = value;
 	return true;
@@ -32,16 +32,8 @@ bool unary_op_variable_resolve() {
 }
 
 bool conditional_if() {
-	switch ( stack.pop.get!int ) {
-		case 0:
-			drop_mode = true;
-			return true;
-		case 1:
-			drop_mode = false;
-			return true;
-		default:
-			throw new Exception("invalid logic value");
-	}
+	drop_mode = !stack.pop.get!bool;
+	return true;
 }
 
 bool conditional_then() {
@@ -132,9 +124,14 @@ bool binary_cond_lt() {
 }
 
 bool binary_cond_eq() {
-	int b = stack.pop.get!int;
-	int a = stack.pop.get!int;
+	auto b = stack.pop;
+	auto a = stack.pop;
 
 	stack.push(a == b);
+	return true;
+}
+
+bool integral_value_bool(bool value) {
+	stack.push(Token(value));
 	return true;
 }

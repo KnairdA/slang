@@ -20,12 +20,13 @@ void end() {
 	string wordToBeDefined;
 
 	definition.front.visit!(
-		(int    x   ) => wordToBeDefined = "",
-		(string name) => wordToBeDefined = name
+		(int    value) => wordToBeDefined = "",
+		(bool   value) => wordToBeDefined = "",
+		(string name ) => wordToBeDefined = name
 	);
 
 	if ( wordToBeDefined == "" ) {
-		throw new Exception("words may not be numeric");
+		throw new Exception("words may not be numeric or boolean");
 	}
 
 	definition.removeFront;
@@ -33,12 +34,15 @@ void end() {
 	definition.nullify;
 }
 
-bool handle(int value) {
-	if ( definition.isNull ) {
-		return false;
-	} else {
-		definition.insertBack(Token(value));
-		return true;
+template handle(T)
+if ( is(T == int) || is(T == bool) ) {
+	bool handle(T value) {
+		if ( definition.isNull ) {
+			return false;
+		} else {
+			definition.insertBack(Token(value));
+			return true;
+		}
 	}
 }
 
@@ -54,4 +58,12 @@ bool handle(string word) {
 
 		return true;
 	}
+}
+
+bool handle(Token token) {
+	return token.visit!(
+		(int    value) => handle(value),
+		(bool   value) => handle(value),
+		(string word ) => handle(word)
+	);
 }

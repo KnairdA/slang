@@ -6,6 +6,10 @@ bool evaluate(int value) {
 	return drop_mode;
 }
 
+bool evaluate(bool value) {
+	return drop_mode;
+}
+
 bool evaluate(string word) {
 	if ( drop_mode ) {
 		switch ( word ) {
@@ -47,6 +51,10 @@ bool evaluate(string word) {
 			return unary_op_stack_dup;
 		case "swp":
 			return binary_op_stack_swp;
+		case "true":
+			return integral_value_bool(true);
+		case "false":
+			return integral_value_bool(false);
 		case "<":
 			return binary_cond_lt;
 		case "=":

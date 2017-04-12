@@ -6,7 +6,7 @@ import std.container : SList;
 
 static import src.definition;
 
-alias Token = Algebraic!(int, string);
+alias Token = Algebraic!(int, bool, string);
 alias Stack = SList;
 
 Stack!Token stack;
@@ -26,18 +26,14 @@ Token pop(ref Stack!Token stack) {
 }
 
 void push(ref Stack!Token stack, Token token) {
-	if ( !token.visit!(
-		(int    x   ) => src.definition.handle(x),
-		(string word) => src.definition.handle(word)
-	) ) {
+	if ( !src.definition.handle(token) ) {
 		stack.insertFront(token);
 	}
 }
 
-void push(ref Stack!Token stack, int value) {
-	stack.push(Token(value));
-}
-
-void push(ref Stack!Token stack, string word) {
-	stack.push(Token(word));
+template push(T)
+if ( is(T == int) || is(T == bool) || is (T == string) ) {
+	void push(ref Stack!Token stack, T value) {
+		stack.push(Token(value));
+	}
 }
