@@ -88,13 +88,21 @@ void evaluate(string word) {
 			int b = stack.pop().get!int;
 			int a = stack.pop().get!int;
 
-			stack.push(a / b);
+			if ( b == 0 ) {
+				throw new Exception("division by 0 undefined");
+			} else {
+				stack.push(a / b);
+			}
 			break;
 		case "%":
 			int b = stack.pop().get!int;
 			int a = stack.pop().get!int;
 
-			stack.push(a % b);
+			if ( b == 0 ) {
+				throw new Exception("modulo 0 undefined");
+			} else {
+				stack.push(a % b);
+			}
 			break;
 		case ".":
 			stack.pop;
