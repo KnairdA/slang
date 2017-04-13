@@ -1,7 +1,8 @@
 module src.stack;
 
-import std.variant;
+import std.conv;
 import std.string;
+import std.variant;
 import std.container : SList;
 
 static import src.definition;
@@ -10,6 +11,14 @@ alias Token = Algebraic!(int, bool, string);
 alias Stack = SList;
 
 Stack!Token stack;
+
+Token toToken(string value) {
+	if ( value.isNumeric ) {
+		return Token(parse!int(value));
+	} else {
+		return Token(value);
+	}
+}
 
 Token top(ref Stack!Token stack) {
 	if ( stack.empty ) {

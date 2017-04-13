@@ -3,11 +3,12 @@ module src.definition;
 import std.string;
 import std.variant;
 import std.typecons;
+
 import std.container : DList;
 
-import src.stack : Token;
+import src.stack;
 
-alias Words = DList!Token[string];
+alias Words = Stack!Token[string];
 
 Nullable!(DList!Token) definition;
 Words                  words;
@@ -30,7 +31,7 @@ void end() {
 	}
 
 	definition.removeFront;
-	words[wordToBeDefined] = definition;
+	words[wordToBeDefined] = Stack!Token(definition[]);
 	definition.nullify;
 }
 
@@ -66,4 +67,12 @@ bool handle(Token token) {
 		(bool   value) => handle(value),
 		(string word ) => handle(word)
 	);
+}
+
+Stack!Token get(string word) {
+	if ( word in words ) {
+		return words[word].dup;
+	} else {
+		return Stack!Token(Token(word));
+	}
 }

@@ -1,4 +1,4 @@
-module src.primitives.impl;
+module src.primitives.core;
 
 import std.stdio;
 
@@ -6,65 +6,40 @@ import src.stack;
 import src.definition;
 
 Token[string] variables;
-bool          drop_mode;
 
-bool definition_start() {
+void definition_start() {
 	src.definition.start;
-	return true;
 }
 
-bool binary_op_variable_bind() {
-	string name  = stack.pop.get!string;
-	Token  value = stack.pop;
-
+void binary_op_variable_bind() {
+	string name     = stack.pop.get!string;
+	Token  value    = stack.pop;
 	variables[name] = value;
-	return true;
 }
 
-bool unary_op_variable_resolve() {
+void unary_op_variable_resolve() {
 	string name = stack.pop.get!string;
 
 	if ( name in variables ) {
 		stack.push(variables[name]);
 	}
-
-	return true;
 }
 
-bool unary_conditional_if() {
-	drop_mode = !stack.pop.get!bool;
-	return true;
-}
-
-bool n_ary_conditional_then() {
-	drop_mode = !drop_mode;
-	return true;
-}
-
-bool n_ary_conditional_else() {
-	drop_mode = false;
-	return true;
-}
-
-bool binary_op_add() {
+void binary_op_add() {
 	int b = stack.pop.get!int;
 	int a = stack.pop.get!int;
 
 	stack.push(a + b);
-
-	return true;
 }
 
-bool binary_op_multiply() {
+void binary_op_multiply() {
 	int b = stack.pop.get!int;
 	int a = stack.pop.get!int;
 
 	stack.push(a * b);
-
-	return true;
 }
 
-bool binary_op_divide() {
+void binary_op_divide() {
 	int b = stack.pop.get!int;
 	int a = stack.pop.get!int;
 
@@ -73,11 +48,9 @@ bool binary_op_divide() {
 	} else {
 		stack.push(a / b);
 	}
-
-	return true;
 }
 
-bool binary_op_modulo() {
+void binary_op_modulo() {
 	int b = stack.pop.get!int;
 	int a = stack.pop.get!int;
 
@@ -86,52 +59,43 @@ bool binary_op_modulo() {
 	} else {
 		stack.push(a % b);
 	}
-
-	return true;
 }
 
-bool unary_op_io_print() {
+void unary_op_io_print() {
 	writeln(stack.top);
-	return true;
 }
 
-bool unary_op_stack_pop() {
+void unary_op_stack_pop() {
 	stack.pop;
-	return true;
 }
 
-bool unary_op_stack_dup() {
+void unary_op_stack_dup() {
 	stack.push(stack.top);
-	return true;
 }
 
-bool binary_op_stack_swp() {
+void binary_op_stack_swp() {
 	auto b = stack.pop;
 	auto a = stack.pop;
 
 	stack.push(b);
 	stack.push(a);
 
-	return true;
 }
 
-bool binary_cond_lt() {
+void binary_cond_lt() {
 	int b = stack.pop.get!int;
 	int a = stack.pop.get!int;
 
 	stack.push(a < b);
-	return true;
 }
 
-bool binary_cond_eq() {
+void binary_cond_eq() {
 	auto b = stack.pop;
 	auto a = stack.pop;
 
 	stack.push(a == b);
-	return true;
 }
 
-bool integral_value_bool(bool value) {
+void integral_value_bool(bool value) {
 	stack.push(Token(value));
-	return true;
 }
