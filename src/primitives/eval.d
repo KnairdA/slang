@@ -14,9 +14,9 @@ bool evaluate(string word) {
 	if ( drop_mode ) {
 		switch ( word ) {
 			case "then":
-				return conditional_then;
+				return n_ary_conditional_then;
 			case "else":
-				return conditional_else;
+				return n_ary_conditional_else;
 			default:
 				return true;
 		}
@@ -30,11 +30,11 @@ bool evaluate(string word) {
 		case "@":
 			return unary_op_variable_resolve;
 		case "if":
-			return conditional_if;
+			return unary_conditional_if;
 		case "then":
-			return conditional_then;
+			return n_ary_conditional_then;
 		case "else":
-			return conditional_else;
+			return n_ary_conditional_else;
 		case "+":
 			return binary_op_add;
 		case "*":

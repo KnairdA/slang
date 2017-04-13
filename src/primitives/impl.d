@@ -31,17 +31,17 @@ bool unary_op_variable_resolve() {
 	return true;
 }
 
-bool conditional_if() {
+bool unary_conditional_if() {
 	drop_mode = !stack.pop.get!bool;
 	return true;
 }
 
-bool conditional_then() {
+bool n_ary_conditional_then() {
 	drop_mode = !drop_mode;
 	return true;
 }
 
-bool conditional_else() {
+bool n_ary_conditional_else() {
 	drop_mode = false;
 	return true;
 }
