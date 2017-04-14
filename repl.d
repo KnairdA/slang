@@ -1,12 +1,13 @@
 import std.stdio;
 import std.string;
 import std.variant;
-import std.typecons;
+
+import std.container.util : make;
 
 import src.stack;
 
-static import definition = src.definition;
-static import primitives = src.primitives.eval;
+import definition = src.definition;
+import primitives = src.primitives.eval;
 
 Stack!Token resolve(Token token) {
 	try {
@@ -27,14 +28,9 @@ Stack!Token resolve(Token token) {
 }
 
 void process(string value) {
-	Stack!Token buffer;
-	Token token = toToken(value);
+	auto buffer = make!(Stack!Token)(toToken(value));
 
-	if ( !definition.handle(token) ) {
-		buffer = resolve(token);
-	}
-
-	while ( !buffer.empty ) {
+	do {
 		Token current = buffer.pop;
 
 		if ( !definition.handle(current) ) {
@@ -49,6 +45,7 @@ void process(string value) {
 			}
 		}
 	}
+	while ( !buffer.empty );
 }
 
 void main() {
