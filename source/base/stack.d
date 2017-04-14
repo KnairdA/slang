@@ -1,11 +1,11 @@
-module src.stack;
+module base.stack;
 
 import std.conv;
 import std.string;
 import std.variant;
 import std.container : SList;
 
-static import src.definition;
+import definition = base.definition;
 
 alias Token = Algebraic!(int, bool, string);
 alias Stack = SList;
@@ -35,7 +35,7 @@ Token pop(ref Stack!Token stack) {
 }
 
 void push(ref Stack!Token stack, Token token) {
-	if ( !src.definition.handle(token) ) {
+	if ( !definition.handle(token) ) {
 		stack.insertFront(token);
 	}
 }

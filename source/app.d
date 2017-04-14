@@ -4,10 +4,10 @@ import std.variant;
 
 import std.container.util : make;
 
-import src.stack;
+import base.stack;
 
-import definition = src.definition;
-import primitives = src.primitives.eval;
+import definition = base.definition;
+import primitives = primitives.eval;
 
 Stack!Token resolve(Token token) {
 	try {

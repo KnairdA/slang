@@ -1,14 +1,14 @@
-module src.primitives.core;
+module primitives.core;
 
 import std.stdio;
 
-import src.stack;
-import src.definition;
+import base.stack;
+import definition = base.definition;
 
 Token[string] variables;
 
 void definition_start() {
-	src.definition.start;
+	definition.start;
 }
 
 void binary_op_variable_bind() {

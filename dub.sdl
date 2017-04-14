@@ -1,0 +1,4 @@
+name        "slang"
+description "Experimental Forth-like stack language implemented in D"
+authors     "Adrian Kummerländer"
+license     "MIT"

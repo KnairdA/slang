@@ -1,10 +1,10 @@
-module src.primitives.eval;
+module primitives.eval;
 
 import std.variant;
 
-import src.stack;
-import src.primitives.core;
-import conditional = src.primitives.conditional;
+import base.stack;
+import primitives.core;
+import conditional = primitives.conditional;
 
 bool evaluate_primitive(string word) {
 	switch ( word ) {

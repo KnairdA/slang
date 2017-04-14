@@ -1,4 +1,4 @@
-module src.definition;
+module base.definition;
 
 import std.string;
 import std.variant;
@@ -6,7 +6,7 @@ import std.typecons;
 
 import std.container : DList;
 
-import src.stack;
+import base.stack;
 
 alias Words = Stack!Token[string];
 

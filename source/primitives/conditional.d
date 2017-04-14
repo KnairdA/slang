@@ -1,10 +1,10 @@
-module src.primitives.conditional;
+module primitives.conditional;
 
 import std.variant;
 import std.typecons;
 import std.container : DList;
 
-import src.stack;
+import base.stack;
 
 Nullable!(DList!Token) buffer;
 bool                   concluded = true;
