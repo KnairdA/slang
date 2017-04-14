@@ -35,38 +35,22 @@ void end() {
 	definition.nullify;
 }
 
-template handle(T)
-if ( is(T == int) || is(T == bool) ) {
-	bool handle(T value) {
-		if ( definition.isNull ) {
-			return false;
-		} else {
-			definition.insertBack(Token(value));
-			return true;
-		}
-	}
-}
-
-bool handle(string word) {
+bool handle(Token token) {
 	if ( definition.isNull ) {
 		return false;
 	} else {
-		if ( word == ";" ) {
-			end();
+		if ( token.type == typeid(string) ) {
+			if ( *token.peek!string == ";" ) {
+				end;
+			} else {
+				definition.insertBack(token);
+			}
 		} else {
-			definition.insertBack(Token(word));
+			definition.insertBack(token);
 		}
 
 		return true;
 	}
-}
-
-bool handle(Token token) {
-	return token.visit!(
-		(int    value) => handle(value),
-		(bool   value) => handle(value),
-		(string word ) => handle(word)
-	);
 }
 
 Stack!Token get(string word) {
