@@ -13,11 +13,7 @@ alias Words = Stack!Token[string];
 Nullable!(DList!Token) definition;
 Words                  words;
 
-void start() {
-	definition = DList!Token();
-}
-
-void end() {
+void register(DList!Token definition) {
 	string wordToBeDefined;
 
 	definition.front.visit!(
@@ -32,25 +28,46 @@ void end() {
 
 	definition.removeFront;
 	words[wordToBeDefined] = Stack!Token(definition[]);
-	definition.nullify;
 }
 
-bool handle(Token token) {
-	if ( definition.isNull ) {
-		return false;
-	} else {
-		if ( token.type == typeid(string) ) {
-			if ( *token.peek!string == ";" ) {
-				end;
-			} else {
-				definition.insertBack(token);
-			}
+template handle(T)
+if ( is(T == int) || is(T == bool) ) {
+	bool handle(T value) {
+		if ( definition.isNull ) {
+			return false;
 		} else {
-			definition.insertBack(token);
+			definition.insertBack(Token(value));
+			return true;
+		}
+	}
+}
+
+bool handle(string word) {
+	if ( definition.isNull ) {
+		if ( word == "§" ) {
+			definition = DList!Token();
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		if ( word == ";" ) {
+			register(definition);
+			definition.nullify;
+		} else {
+			definition.insertBack(Token(word));
 		}
 
 		return true;
 	}
+}
+
+bool handle(Token token) {
+	return token.visit!(
+		(int    value) => handle(value),
+		(bool   value) => handle(value),
+		(string word ) => handle(word)
+	);
 }
 
 Stack!Token get(string word) {

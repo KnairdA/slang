@@ -3,13 +3,8 @@ module primitives.core;
 import std.stdio;
 
 import base.stack;
-import definition = base.definition;
 
 Token[string] variables;
-
-void definition_start() {
-	definition.start;
-}
 
 void binary_op_variable_bind() {
 	string name     = stack.pop.get!string;

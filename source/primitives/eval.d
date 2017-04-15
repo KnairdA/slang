@@ -10,12 +10,8 @@ import conditional = primitives.conditional;
 
 bool evaluate_primitive(string word) {
 	switch ( word ) {
-		case     "§"     : definition_start;           break;
 		case     "$"     : binary_op_variable_bind;    break;
 		case     "@"     : unary_op_variable_resolve;  break;
-		case     "if"    : conditional.eval_if;        break;
-		case     "then"  : conditional.eval_then;      break;
-		case     "else"  : conditional.eval_else;      break;
 		case     "+"     : binary_op_add;              break;
 		case     "*"     : binary_op_multiply;         break;
 		case     "/"     : binary_op_divide;           break;

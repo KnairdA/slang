@@ -10,32 +10,7 @@ Nullable!(DList!Token) buffer;
 bool                   concluded = true;
 bool                   drop_mode = false;
 
-void capture(Token token) {
-	if ( !drop_mode ) {
-		buffer.insertBack(token);
-	}
-}
-
-bool handle(Token token) {
-	if ( concluded && buffer.isNull ) {
-		return false;
-	}
-
-	if ( token.type == typeid(string) ) {
-		switch ( *token.peek!string ) {
-			case "if"   : eval_if;        break;
-			case "then" : eval_then;      break;
-			case "else" : eval_else;      break;
-			default     : capture(token); break;
-		}
-	} else {
-		capture(token);
-	}
-
-	return true;
-}
-
-void eval_if() {
+void unary_op_if() {
 	if ( concluded ) {
 		buffer    = DList!Token();
 		drop_mode = !stack.pop.get!bool;
@@ -45,7 +20,7 @@ void eval_if() {
 	}
 }
 
-void eval_then() {
+void n_ary_op_then() {
 	if ( concluded  ) {
 		throw new Exception("`then` without preceding `if`");
 	} else {
@@ -53,13 +28,42 @@ void eval_then() {
 	}
 }
 
-void eval_else() {
+void n_ary_op_else() {
 	if ( concluded ) {
 		throw new Exception("`else` without preceding `if`");
 	} else {
 		drop_mode = false;
 		concluded = true;
 	}
+}
+
+bool capture(Token token) {
+	if ( concluded && buffer.isNull ) {
+		return false;
+	} else {
+		if ( !drop_mode ) {
+			buffer.insertBack(token);
+		}
+
+		return true;
+	}
+}
+
+bool handle(string word) {
+	switch ( word ) {
+		case "if"   : unary_op_if;   return true;
+		case "then" : n_ary_op_then; return true;
+		case "else" : n_ary_op_else; return true;
+		default     :                return capture(Token(word));
+	}
+}
+
+bool handle(Token token) {
+	return token.visit!(
+		(int        ) => capture(token),
+		(bool       ) => capture(token),
+		(string word) => handle(word)
+	);
 }
 
 bool dischargeable() {
