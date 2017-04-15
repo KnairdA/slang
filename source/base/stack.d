@@ -5,8 +5,6 @@ import std.string;
 import std.variant;
 import std.container : SList;
 
-import definition = base.definition;
-
 alias Token = Algebraic!(int, bool, string);
 alias Stack = SList;
 
@@ -35,9 +33,7 @@ Token pop(ref Stack!Token stack) {
 }
 
 void push(ref Stack!Token stack, Token token) {
-	if ( !definition.handle(token) ) {
-		stack.insertFront(token);
-	}
+	stack.insertFront(token);
 }
 
 template push(T)

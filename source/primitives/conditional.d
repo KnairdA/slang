@@ -16,7 +16,7 @@ void capture(Token token) {
 	}
 }
 
-bool drop(Token token) {
+bool handle(Token token) {
 	if ( concluded && buffer.isNull ) {
 		return false;
 	}

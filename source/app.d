@@ -9,7 +9,7 @@ import base.stack;
 import definition = base.definition;
 import primitives = primitives.eval;
 
-Stack!Token resolve(Token token) {
+Stack!Token evaluate(Token token) {
 	try {
 		if ( primitives.evaluate(token) ) {
 			return primitives.result;
@@ -31,17 +31,14 @@ void process(string value) {
 	auto buffer = make!(Stack!Token)(toToken(value));
 
 	do {
-		Token current = buffer.pop;
+		Token       current = buffer.pop;
+		Stack!Token result  = evaluate(current);
 
-		if ( !definition.handle(current) ) {
-			Stack!Token resolved = resolve(current);
-
-			if ( !resolved.empty ) {
-				if ( resolved.front == current ) {
-					stack.push(current);
-				} else {
-					buffer.insertFront(resolved[]);
-				}
+		if ( !result.empty ) {
+			if ( result.front == current ) {
+				stack.push(current);
+			} else {
+				buffer.insertFront(result[]);
 			}
 		}
 	}

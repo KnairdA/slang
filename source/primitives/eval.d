@@ -4,6 +4,8 @@ import std.variant;
 
 import base.stack;
 import primitives.core;
+
+import definition  = base.definition;
 import conditional = primitives.conditional;
 
 bool evaluate_primitive(string word) {
@@ -33,15 +35,19 @@ bool evaluate_primitive(string word) {
 }
 
 bool evaluate(Token token) {
-	if ( conditional.drop(token) ) {
+	if ( definition.handle(token) ) {
 		return true;
-	} else {
-		return token.visit!(
-			(int    value) => false,
-			(bool   value) => false,
-			(string word ) => evaluate_primitive(word)
-		);
 	}
+
+	if ( conditional.handle(token) ) {
+		return true;
+	}
+
+	return token.visit!(
+		(int    value) => false,
+		(bool   value) => false,
+		(string word ) => evaluate_primitive(word)
+	);
 }
 
 Stack!Token result() {
