@@ -6,6 +6,39 @@ import std.container : DList;
 
 import base.stack;
 
+bool handle(string word) {
+	switch ( word ) {
+		case "if"   : unary_op_if;   return true;
+		case "then" : n_ary_op_then; return true;
+		case "else" : n_ary_op_else; return true;
+		default     :                return capture(Token(word));
+	}
+}
+
+bool handle(Token token) {
+	return token.visit!(
+		(int        ) => capture(token),
+		(bool       ) => capture(token),
+		(string word) => handle(word)
+	);
+}
+
+bool dischargeable() {
+	return concluded && !buffer.isNull;
+}
+
+Stack!Token discharge() {
+	if ( concluded ) {
+		Stack!Token result = buffer[];
+		buffer.nullify;
+		return result;
+	} else {
+		throw new Exception("unconcluded conditional may not be discharged");
+	}
+}
+
+private {
+
 Nullable!(DList!Token) buffer;
 bool                   concluded = true;
 bool                   drop_mode = false;
@@ -49,33 +82,4 @@ bool capture(Token token) {
 	}
 }
 
-bool handle(string word) {
-	switch ( word ) {
-		case "if"   : unary_op_if;   return true;
-		case "then" : n_ary_op_then; return true;
-		case "else" : n_ary_op_else; return true;
-		default     :                return capture(Token(word));
-	}
-}
-
-bool handle(Token token) {
-	return token.visit!(
-		(int        ) => capture(token),
-		(bool       ) => capture(token),
-		(string word) => handle(word)
-	);
-}
-
-bool dischargeable() {
-	return concluded && !buffer.isNull;
-}
-
-Stack!Token discharge() {
-	if ( concluded ) {
-		Stack!Token result = buffer[];
-		buffer.nullify;
-		return result;
-	} else {
-		throw new Exception("unconcluded conditional may not be discharged");
-	}
 }

@@ -4,8 +4,6 @@ import std.stdio;
 
 import base.stack;
 
-Token[string] variables;
-
 bool handle(string word) {
 	switch ( word ) {
 		case     "$"     : binary_op_variable_bind;      break;
@@ -27,6 +25,10 @@ bool handle(string word) {
 
 	return true;
 }
+
+private {
+
+Token[string] variables;
 
 void binary_op_variable_bind() {
 	string name     = stack.pop.get!string;
@@ -115,4 +117,6 @@ void binary_cond_eq() {
 
 void nullary_op_value_bool(bool value) {
 	stack.push(Token(value));
+}
+
 }

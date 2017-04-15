@@ -10,8 +10,27 @@ import base.stack;
 
 alias Words = Stack!Token[string];
 
+Words words;
+
+bool handle(Token token) {
+	return token.visit!(
+		(int    value) => handle(value),
+		(bool   value) => handle(value),
+		(string word ) => handle(word)
+	);
+}
+
+Stack!Token get(string word) {
+	if ( word in words ) {
+		return words[word].dup;
+	} else {
+		return Stack!Token(Token(word));
+	}
+}
+
+private {
+
 Nullable!(DList!Token) definition;
-Words                  words;
 
 void register(DList!Token definition) {
 	string wordToBeDefined;
@@ -62,18 +81,4 @@ bool handle(string word) {
 	}
 }
 
-bool handle(Token token) {
-	return token.visit!(
-		(int    value) => handle(value),
-		(bool   value) => handle(value),
-		(string word ) => handle(word)
-	);
-}
-
-Stack!Token get(string word) {
-	if ( word in words ) {
-		return words[word].dup;
-	} else {
-		return Stack!Token(Token(word));
-	}
 }
