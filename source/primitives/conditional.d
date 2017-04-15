@@ -26,7 +26,7 @@ bool drop(Token token) {
 			case "if"   : eval_if;        break;
 			case "then" : eval_then;      break;
 			case "else" : eval_else;      break;
-			default     : capture(token); break; 
+			default     : capture(token); break;
 		}
 	} else {
 		capture(token);
@@ -55,7 +55,7 @@ void eval_then() {
 
 void eval_else() {
 	if ( concluded ) {
-		throw new Exception("`else` without preceding `if`");	
+		throw new Exception("`else` without preceding `if`");
 	} else {
 		drop_mode = false;
 		concluded = true;
@@ -72,6 +72,6 @@ Stack!Token discharge() {
 		buffer.nullify;
 		return result;
 	} else {
-		throw new Exception("unconcluded conditional may not be discharged");	
+		throw new Exception("unconcluded conditional may not be discharged");
 	}
 }
