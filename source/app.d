@@ -38,7 +38,7 @@ void process(string value) {
 			if ( result.front == current ) {
 				stack.push(current);
 			} else {
-				buffer.insertFront(result[]);
+				buffer.push(result);
 			}
 		}
 	}

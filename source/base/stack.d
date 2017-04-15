@@ -32,13 +32,17 @@ Token pop(ref Stack!Token stack) {
 	return token;
 }
 
-void push(ref Stack!Token stack, Token token) {
-	stack.insertFront(token);
-}
-
 template push(T)
 if ( is(T == int) || is(T == bool) || is (T == string) ) {
 	void push(ref Stack!Token stack, T value) {
 		stack.push(Token(value));
 	}
+}
+
+void push(ref Stack!Token stack, Token token) {
+	stack.insertFront(token);
+}
+
+void push(ref Stack!Token stack, Stack!Token prefix) {
+	stack.insertFront(prefix[]);
 }
