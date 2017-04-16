@@ -1,8 +1,19 @@
 module primitives.core;
 
 import std.stdio;
+import std.variant;
 
 import state.stack;
+
+bool handle(Token token) {
+	return token.visit!(
+		(int        ) => false,
+		(bool       ) => false,
+		(string word) => handle(word)
+	);
+}
+
+private {
 
 bool handle(string word) {
 	switch ( word ) {
@@ -23,8 +34,6 @@ bool handle(string word) {
 
 	return true;
 }
-
-private {
 
 void binary_op_add() {
 	int b = stack.pop.get!int;

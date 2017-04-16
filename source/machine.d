@@ -6,10 +6,13 @@ import std.variant;
 import std.stdio          : writeln;
 import std.container.util : make;
 
-import primitives = primitives.eval;
-import definition = state.definition;
-
 import state.stack;
+
+import definition  = state.definition;
+import variable    = state.variable;
+
+import core        = primitives.core;
+import conditional = primitives.conditional;
 
 void process(string value) {
 	auto buffer = make!(Stack!Token)(toToken(value));
@@ -33,15 +36,31 @@ private {
 
 Stack!Token evaluate(Token token) {
 	try {
-		if ( primitives.evaluate(token) ) {
-			return primitives.result;
-		} else {
-			return token.visit!(
-				(int    value) => Stack!Token(Token(value)),
-				(bool   value) => Stack!Token(Token(value)),
-				(string word ) => definition.get(word)
-			);
+		if ( definition.handle(token) ) {
+			return Stack!Token();
 		}
+
+		if ( conditional.handle(token) ) {
+			if ( conditional.dischargeable ) {
+				return conditional.discharge;
+			} else {
+				return Stack!Token();
+			}
+		}
+
+		if ( variable.handle(token) ) {
+			return Stack!Token();
+		}
+
+		if ( core.handle(token) ) {
+			return Stack!Token();
+		}
+
+		return token.visit!(
+			(int        ) => Stack!Token(token),
+			(bool       ) => Stack!Token(token),
+			(string word) => definition.get(word)
+		);
 	}
 	catch (Exception ex) {
 		writeln("Error: ", ex.msg);
