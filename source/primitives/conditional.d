@@ -4,7 +4,7 @@ import std.variant;
 import std.typecons;
 import std.container : DList;
 
-import base.stack;
+import state.stack;
 
 bool handle(string word) {
 	switch ( word ) {

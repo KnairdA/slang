@@ -2,10 +2,12 @@ module primitives.eval;
 
 import std.variant;
 
-import base.stack;
+import state.stack;
+
+import definition  = state.definition;
+import variable    = state.variable;
 
 import core        = primitives.core;
-import definition  = base.definition;
 import conditional = primitives.conditional;
 
 bool evaluate(Token token) {
@@ -14,6 +16,10 @@ bool evaluate(Token token) {
 	}
 
 	if ( conditional.handle(token) ) {
+		return true;
+	}
+
+	if ( variable.handle(token) ) {
 		return true;
 	}
 

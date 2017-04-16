@@ -2,12 +2,10 @@ module primitives.core;
 
 import std.stdio;
 
-import base.stack;
+import state.stack;
 
 bool handle(string word) {
 	switch ( word ) {
-		case     "$"     : binary_op_variable_bind;      break;
-		case     "@"     : unary_op_variable_resolve;    break;
 		case     "+"     : binary_op_add;                break;
 		case     "*"     : binary_op_multiply;           break;
 		case     "/"     : binary_op_divide;             break;
@@ -27,22 +25,6 @@ bool handle(string word) {
 }
 
 private {
-
-Token[string] variables;
-
-void binary_op_variable_bind() {
-	string name     = stack.pop.get!string;
-	Token  value    = stack.pop;
-	variables[name] = value;
-}
-
-void unary_op_variable_resolve() {
-	string name = stack.pop.get!string;
-
-	if ( name in variables ) {
-		stack.push(variables[name]);
-	}
-}
 
 void binary_op_add() {
 	int b = stack.pop.get!int;

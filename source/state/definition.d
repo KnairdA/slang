@@ -1,4 +1,4 @@
-module base.definition;
+module state.definition;
 
 import std.string;
 import std.variant;
@@ -6,7 +6,7 @@ import std.typecons;
 
 import std.container : DList;
 
-import base.stack;
+import state.stack;
 
 alias Words = Stack!Token[string];
 

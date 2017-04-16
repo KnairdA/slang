@@ -6,10 +6,10 @@ import std.variant;
 import std.stdio          : writeln;
 import std.container.util : make;
 
-import definition = base.definition;
 import primitives = primitives.eval;
+import definition = state.definition;
 
-import base.stack;
+import state.stack;
 
 void process(string value) {
 	auto buffer = make!(Stack!Token)(toToken(value));
