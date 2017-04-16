@@ -70,11 +70,15 @@ bool handle(string word) {
 			return false;
 		}
 	} else {
-		if ( word == ";" ) {
-			register(definition);
-			definition.nullify;
-		} else {
-			definition.insertBack(Token(word));
+		switch ( word ) {
+			case "§" :
+				throw new Exception("definitions may not be nested");
+			case ";" :
+				register(definition);
+				definition.nullify;
+				break;
+			default:
+				definition.insertBack(Token(word));
 		}
 
 		return true;
