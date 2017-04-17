@@ -31,6 +31,7 @@ bool handle(string word) {
 		case     "false" : nullary_op_value_bool(false); break;
 		case     "<"     : binary_cond_lt;               break;
 		case     "="     : binary_cond_eq;               break;
+		case     "#"     : debug_print_stack;            break;
 		default          : return false;
 	}
 
@@ -128,6 +129,10 @@ void binary_cond_eq() {
 	auto a = stack.pop;
 
 	stack.push(a == b);
+}
+
+void debug_print_stack() {
+	writeln(stack[]);
 }
 
 }
