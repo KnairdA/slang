@@ -29,8 +29,11 @@ bool handle(string word) {
 		case     "rot"   : ternary_op_stack_rot;         break;
 		case     "true"  : nullary_op_value_bool(true);  break;
 		case     "false" : nullary_op_value_bool(false); break;
+		case     "!"     : unary_op_negate;              break;
 		case     "<"     : binary_cond_lt;               break;
 		case     "="     : binary_cond_eq;               break;
+		case     "&"     : binary_cond_and;              break;
+		case     "or"    : binary_cond_or;               break;
 		case     "#"     : debug_print_stack;            break;
 		default          : return false;
 	}
@@ -117,6 +120,12 @@ void nullary_op_value_bool(bool value) {
 	stack.push(Token(value));
 }
 
+void unary_op_negate() {
+	bool a = stack.pop.get!bool;
+
+	stack.push(Token(!a));
+}
+
 void binary_cond_lt() {
 	int b = stack.pop.get!int;
 	int a = stack.pop.get!int;
@@ -129,6 +138,20 @@ void binary_cond_eq() {
 	auto a = stack.pop;
 
 	stack.push(a == b);
+}
+
+void binary_cond_and() {
+	bool b = stack.pop.get!bool;
+	bool a = stack.pop.get!bool;
+
+	stack.push(Token(a && b));
+}
+
+void binary_cond_or() {
+	bool b = stack.pop.get!bool;
+	bool a = stack.pop.get!bool;
+
+	stack.push(Token(a || b));
 }
 
 void debug_print_stack() {
