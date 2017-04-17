@@ -25,6 +25,8 @@ bool handle(string word) {
 		case     "pop"   : unary_op_stack_pop;           break;
 		case     "dup"   : unary_op_stack_dup;           break;
 		case     "swp"   : binary_op_stack_swp;          break;
+		case     "over"  : binary_op_stack_over;         break;
+		case     "rot"   : ternary_op_stack_rot;         break;
 		case     "true"  : nullary_op_value_bool(true);  break;
 		case     "false" : nullary_op_value_bool(false); break;
 		case     "<"     : binary_cond_lt;               break;
@@ -89,7 +91,29 @@ void binary_op_stack_swp() {
 
 	stack.push(b);
 	stack.push(a);
+}
 
+void binary_op_stack_over() {
+	auto b = stack.pop;
+	auto a = stack.pop;
+
+	stack.push(a);
+	stack.push(b);
+	stack.push(a);
+}
+
+void ternary_op_stack_rot() {
+	auto c = stack.pop;
+	auto b = stack.pop;
+	auto a = stack.pop;
+
+	stack.push(b);
+	stack.push(c);
+	stack.push(a);
+}
+
+void nullary_op_value_bool(bool value) {
+	stack.push(Token(value));
 }
 
 void binary_cond_lt() {
@@ -104,10 +128,6 @@ void binary_cond_eq() {
 	auto a = stack.pop;
 
 	stack.push(a == b);
-}
-
-void nullary_op_value_bool(bool value) {
-	stack.push(Token(value));
 }
 
 }
