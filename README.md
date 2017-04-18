@@ -27,7 +27,7 @@ Currently implemented primitives:
 | `pop`                | Remove uppermost stack element                           |
 | `dup`                | Duplicate top-of-stack                                   |
 | `swp`                | Swap the first two stack elements                        |
-| `over`               | Place a copy of the second stack element on top-of-stack |
+| `ovr`                | Place a copy of the second stack element on top-of-stack |
 | `rot`                | Rotate the top three stack elements                      |
 | `true`               | Write true boolean value to top-of-stack                 |
 | `false`              | Write false boolean value to top-of-stack                |

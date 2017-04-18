@@ -25,7 +25,7 @@ bool handle(string word) {
 		case     "pop"   : unary_op_stack_pop;           break;
 		case     "dup"   : unary_op_stack_dup;           break;
 		case     "swp"   : binary_op_stack_swp;          break;
-		case     "over"  : binary_op_stack_over;         break;
+		case     "ovr"   : binary_op_stack_ovr;         break;
 		case     "rot"   : ternary_op_stack_rot;         break;
 		case     "true"  : nullary_op_value_bool(true);  break;
 		case     "false" : nullary_op_value_bool(false); break;
@@ -97,7 +97,7 @@ void binary_op_stack_swp() {
 	stack.push(a);
 }
 
-void binary_op_stack_over() {
+void binary_op_stack_ovr() {
 	auto b = stack.pop;
 	auto a = stack.pop;
 
