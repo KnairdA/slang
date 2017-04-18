@@ -31,9 +31,9 @@ Currently implemented primitives:
 | `rot`                | Rotate the top three stack elements                      |
 | `true`               | Write true boolean value to top-of-stack                 |
 | `false`              | Write false boolean value to top-of-stack                |
-| `!`                  | Negate boolean value                                     |
+| `not`                | Negate boolean value                                     |
+| `and`                | Boolean and                                              |
+| `or`                 | Boolean or                                               |
 | `<`                  | Compare size of two integers                             |
 | `=`                  | Compare equality of two stack values                     |
-| `&`                  | Boolean and                                              |
-| `or`                 | Boolean or                                               |
 | `#`                  | Debug word printing the whole stack to _stdout_          |
