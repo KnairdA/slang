@@ -7,7 +7,7 @@
 § buzz? @ 5 % 0 = ;
 
 § fizzbuzz_or_fizz     buzz? if fizzbuzz then fizz else . pop ;
-§ buzz_or_print    dup buzz? if buzz     then @    else . pop ;
+§ buzz_or_print    dup buzz? if pop buzz then @    else . pop ;
 
 § branch dup fizz? if fizzbuzz_or_fizz then buzz_or_print else ;
 
