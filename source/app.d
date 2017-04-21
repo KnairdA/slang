@@ -1,23 +1,24 @@
+import std.conv      : to;
 import std.string    : split;
 import std.range     : dropOne;
 import std.algorithm : map, each;
-import std.stdio     : stdin, File, lines;
+import std.stdio     : stdin, File;
 
 static import machine;
 
+void process(string line) {
+	line.split.each!(machine.process);
+}
+
 void process(ref File file) {
-	foreach ( string line; lines(file) ) {
-		line.split.each!(machine.process);
-	}
+	file.byLine.map!(to!string).each!process;
 }
 
 void main(string[] args) {
 	args
 		.dropOne
-		.map!(File)
+		.map!File
 		.each!((File file) => file.process);
 
-	while ( !stdin.eof ) {
-		stdin.readln.split.each!(machine.process);
-	}
+	stdin.process;
 }
