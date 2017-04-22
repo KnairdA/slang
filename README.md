@@ -1,17 +1,29 @@
 # slang
 
-…a experimental Forth-like stack language implemented in D.
+…is a experimental Forth-like stack language implemented in D.
 
 ## Example
 
-	1 i $
-	§ incr dup @ 1 + swp $ ;
-	§ print @ . pop ;
-	§ withinBounds @ 10 < ;
-	§ loop i withinBounds if i print i incr loop then else ;
-	loop
+```
+1 i $
 
-The above _slang_ code to be entered in the repl prints the numbers from 1 to 9. The repl may be compiled and executed using `dub run` in the project directory. Check the `example` directory for further further demonstrations.
+§ incr dup @ 1 + swp $ ;
+§ withinBounds @ 100 < ;
+
+§ fizz? @ 3 % 0 = ;
+§ buzz? @ 5 % 0 = ;
+
+§ fizzbuzz_or_fizz     buzz? if fizzbuzz then fizz else . pop ;
+§ buzz_or_print    dup buzz? if pop buzz then @    else . pop ;
+
+§ branch dup fizz? if fizzbuzz_or_fizz then buzz_or_print else ;
+
+§ loop i withinBounds if i branch i incr loop then else ;
+
+loop
+```
+
+This listing implements the common _FizzBuzz_ example in _slang_. It may be executed by compiling the REPL using `dub build` in the project directory and running `./slang example/fizzbuzz.slang`.
 
 ## Words
 
@@ -37,3 +49,5 @@ Currently implemented primitives:
 | `<`                  | Compare size of two integers                             |
 | `=`                  | Compare equality of two stack values                     |
 | `#`                  | Debug word printing the whole stack to _stdout_          |
+
+Further words are implemented in `library/base.slang`.
