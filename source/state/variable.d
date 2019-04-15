@@ -16,7 +16,8 @@ bool handle(Token token) {
 	return token.visit!(
 		(int        ) => false,
 		(bool       ) => false,
-		(string word) => handle(word)
+		(string word) => handle(word),
+		(DList!int  ) => false
 	);
 }
 

@@ -2,6 +2,8 @@ module primitives.core;
 
 import std.stdio;
 import std.variant;
+import std.conv : to;
+import std.algorithm : map;
 
 import state.stack;
 
@@ -9,7 +11,8 @@ bool handle(Token token) {
 	return token.visit!(
 		(int        ) => false,
 		(bool       ) => false,
-		(string word) => handle(word)
+		(string word) => handle(word),
+		(DList!int  ) => false
 	);
 }
 
@@ -25,7 +28,8 @@ bool handle(string word) {
 		case     "pop"   : unary_op_stack_pop;           break;
 		case     "dup"   : unary_op_stack_dup;           break;
 		case     "swp"   : binary_op_stack_swp;          break;
-		case     "ovr"   : binary_op_stack_ovr;         break;
+		case     "ovr"   : binary_op_stack_ovr;          break;
+		case     ":"     : binary_op_vector_cons;        break;
 		case     "rot"   : ternary_op_stack_rot;         break;
 		case     "true"  : nullary_op_value_bool(true);  break;
 		case     "false" : nullary_op_value_bool(false); break;
@@ -43,16 +47,18 @@ bool handle(string word) {
 
 void binary_op_add() {
 	int b = stack.pop.get!int;
-	int a = stack.pop.get!int;
-
-	stack.push(a + b);
+	stack.pop.tryVisit!(
+		(int a)       => stack.push(a + b),
+		(DList!int v) => stack.push(v[].map!(x => x + b).to!(DList!int))
+	);
 }
 
 void binary_op_multiply() {
 	int b = stack.pop.get!int;
-	int a = stack.pop.get!int;
-
-	stack.push(a * b);
+	stack.pop.tryVisit!(
+		(int a)       => stack.push(a * b),
+		(DList!int v) => stack.push(v[].map!(x => x * b).to!(DList!int))
+	);
 }
 
 void binary_op_divide() {
@@ -77,8 +83,22 @@ void binary_op_modulo() {
 	}
 }
 
+void binary_op_vector_cons() {
+	int b = stack.pop.get!int;
+
+	stack.pop.tryVisit!(
+		(int       a) => stack.push(DList!int(a, b)),
+		(DList!int v) => stack.push(v ~ b)
+	);
+}
+
 void unary_op_io_print() {
-	writeln(stack.top);
+	stack.top.visit!(
+		(int       x) => writeln(x),
+		(bool      b) => writeln(b),
+		(string word) => writeln(word),
+		(DList!int v) => writeln(v[])
+	);
 }
 
 void unary_op_stack_pop() {

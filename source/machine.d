@@ -59,7 +59,8 @@ Stack!Token evaluate(Token token) {
 		return token.visit!(
 			(int        ) => Stack!Token(token),
 			(bool       ) => Stack!Token(token),
-			(string word) => definition.get(word)
+			(string word) => definition.get(word),
+			(DList!int  ) => Stack!Token(token)
 		);
 	}
 	catch (Exception ex) {

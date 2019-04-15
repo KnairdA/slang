@@ -3,9 +3,9 @@ module state.stack;
 import std.conv;
 import std.string;
 import std.variant;
-import std.container : SList;
+import std.container : SList, DList;
 
-alias Token = Algebraic!(int, bool, string);
+alias Token = Algebraic!(int, bool, string, DList!int);
 alias Stack = SList;
 
 Stack!Token stack;
@@ -33,7 +33,7 @@ Token pop(ref Stack!Token stack) {
 }
 
 template push(T)
-if ( is(T == int) || is(T == bool) || is (T == string) ) {
+if ( is(T == int) || is(T == bool) || is (T == string) || is (T == DList!int) ) {
 	void push(ref Stack!Token stack, T value) {
 		stack.push(Token(value));
 	}

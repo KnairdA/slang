@@ -16,7 +16,8 @@ bool handle(Token token) {
 	return token.visit!(
 		(int    value) => handle(value),
 		(bool   value) => handle(value),
-		(string word ) => handle(word)
+		(string word ) => handle(word),
+		(DList!int  v) => handle(v)
 	);
 }
 
@@ -38,7 +39,8 @@ void register(DList!Token definition) {
 	definition.front.visit!(
 		(int    value) => wordToBeDefined = "",
 		(bool   value) => wordToBeDefined = "",
-		(string name ) => wordToBeDefined = name
+		(string name ) => wordToBeDefined = name,
+		(DList!int  v) => wordToBeDefined = ""
 	);
 
 	if ( wordToBeDefined == "" ) {
@@ -50,7 +52,7 @@ void register(DList!Token definition) {
 }
 
 template handle(T)
-if ( is(T == int) || is(T == bool) ) {
+if ( is(T == int) || is(T == bool) || is(T == DList!int) ) {
 	bool handle(T value) {
 		if ( definition.isNull ) {
 			return false;

@@ -19,7 +19,8 @@ bool handle(Token token) {
 	return token.visit!(
 		(int        ) => capture(token),
 		(bool       ) => capture(token),
-		(string word) => handle(word)
+		(string word) => handle(word),
+		(DList!int  ) => capture(token)
 	);
 }
 
